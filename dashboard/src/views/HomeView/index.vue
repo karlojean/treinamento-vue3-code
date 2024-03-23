@@ -13,7 +13,7 @@ import Contact from "./Contact.vue";
 import { onMounted } from "vue";
 import useModal from "@/hooks/useModal";
 
-const router = useRouter;
+const router = useRouter();
 const modal = useModal();
 
 onMounted(() => {
