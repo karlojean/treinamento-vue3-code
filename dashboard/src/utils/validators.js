@@ -1,5 +1,4 @@
 export function validateEmptyAndLength3(value) {
-  console.log(value);
   if (!value) {
     return "*Este campo é obrigatório";
   }

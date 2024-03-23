@@ -144,7 +144,6 @@ async function handleSubmit() {
   } catch (error) {
     isLoading.value = false;
     hasErrors.value = !!error;
-    console.log("aa");
     toast.error("Ocorreu um error ao criar a conta");
   }
 }
