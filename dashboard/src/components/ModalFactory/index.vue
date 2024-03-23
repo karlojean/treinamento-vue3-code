@@ -23,14 +23,9 @@ import {
   onBeforeMount,
   onMounted,
   reactive,
-  defineAsyncComponent,
   computed,
+  defineAsyncComponent,
 } from "vue";
-
-/* eslint-disable */
-const is = computed(() =>
-  defineAsyncComponent(() => import(`../${state.component}`))
-);
 
 const modal = useModal();
 const DEFAULT_WIDTH = "w-3/4 lg:w-1/3";
@@ -40,6 +35,12 @@ const state = reactive({
   component: {},
   props: {},
   width: DEFAULT_WIDTH,
+});
+
+/* eslint-disable */
+const is = computed(() => {
+  const newComponent = state.component;
+  return defineAsyncComponent(() => import(`../${newComponent}`));
 });
 
 onMounted(() => {
