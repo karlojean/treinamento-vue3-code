@@ -22,7 +22,30 @@
           <template #fallback> <filters-loading class="mt-8" /> </template>
         </suspense>
       </div>
-      <div class="px-10 pt-20 grid-span-3"></div>
+      <div class="px-10 pt-20 col-span-3">
+        <p
+          v-if="hasError"
+          class="text-lg text-center text-gray-800 font-regular"
+        >
+          Aconteceu um erro ao carregar os feedbacks
+        </p>
+        <p
+          v-if="!feedbackLength && !isLoading"
+          class="text-lg text-center text-gray-800 font-regular"
+        >
+          Nenhum feedbacks recebido
+        </p>
+
+        <feedback-card-loading v-if="isLoading.value" />
+        <feedback-card
+          v-else
+          v-for="(feedback, index) in feedbacksData"
+          :key="feedback.id"
+          :is-opened="index === 0"
+          :feedback="feedback"
+          class="mb-8"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -30,4 +53,46 @@
 import HeaderLogged from "../../components/HeaderLogged";
 import Filters from "./Filters";
 import FiltersLoading from "./FiltersLoading";
+import FeedbackCardLoading from "../../components/FeedbackCard/Loading";
+import FeedbackCard from "../../components/FeedbackCard";
+import { computed, onMounted, ref } from "vue";
+import services from "@/services";
+
+const isLoading = ref(false);
+const feedbacksData = ref([]);
+const hasError = ref(false);
+const currentFeedbackType = ref("");
+const pagination = ref({
+  limit: 5,
+  offset: 0,
+});
+
+onMounted(() => {
+  fetchFeedbacks();
+});
+
+const feedbackLength = computed(() => {
+  return feedbacksData.value.length;
+});
+
+function handleErrors(error) {
+  hasError.value = !!error;
+}
+
+async function fetchFeedbacks() {
+  try {
+    isLoading.value = true;
+
+    const { data } = await services.feedbacks.getAll({
+      ...pagination.value,
+      type: currentFeedbackType.value,
+    });
+
+    feedbacksData.value = data.results;
+    pagination.value = data.result;
+    isLoading.value = false;
+  } catch (error) {
+    handleErrors(error);
+  }
+}
 </script>

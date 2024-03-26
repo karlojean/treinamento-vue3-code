@@ -12,6 +12,7 @@ export default (httpClient) => ({
     }
 
     const response = await httpClient.get("/feedbacks", { params: query });
+
     return { data: response.data };
   },
   // eslint-disable-next-line
