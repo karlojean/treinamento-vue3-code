@@ -1,5 +1,5 @@
 <template>
-  <content-loader class="flex flex-col items-center rounded">
+  <content-loader class="flex flex-col items-center rounded" width="100%">
     <content-loader
       class="mt-3 rounded"
       width="90%"

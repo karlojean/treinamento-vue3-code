@@ -17,6 +17,7 @@
           <template #default>
             <filters
               class="mt-8 animate__animated animate__fadeIn animate__faster"
+              @select="changeFeedbacksType"
             />
           </template>
           <template #fallback> <filters-loading class="mt-8" /> </template>
@@ -30,13 +31,15 @@
           Aconteceu um erro ao carregar os feedbacks
         </p>
         <p
-          v-if="!feedbackLength && !isLoading"
+          v-if="
+            !feedbackLength && !isLoading && !isLoadingFeedbacks && !hasError
+          "
           class="text-lg text-center text-gray-800 font-regular"
         >
           Nenhum feedbacks recebido
         </p>
 
-        <feedback-card-loading v-if="isLoading.value" />
+        <feedback-card-loading v-if="isLoading || isLoadingFeedbacks" />
         <feedback-card
           v-else
           v-for="(feedback, index) in feedbacksData"
@@ -45,6 +48,7 @@
           :feedback="feedback"
           class="mb-8"
         />
+        <feedback-card-loading v-if="isLoadingMoreFeedbacks" />
       </div>
     </div>
   </div>
@@ -55,10 +59,12 @@ import Filters from "./Filters";
 import FiltersLoading from "./FiltersLoading";
 import FeedbackCardLoading from "../../components/FeedbackCard/Loading";
 import FeedbackCard from "../../components/FeedbackCard";
-import { computed, onMounted, ref } from "vue";
+import { computed, onErrorCaptured, onMounted, onUnmounted, ref } from "vue";
 import services from "@/services";
 
 const isLoading = ref(false);
+const isLoadingFeedbacks = ref(false);
+const isLoadingMoreFeedbacks = ref(false);
 const feedbacksData = ref([]);
 const hasError = ref(false);
 const currentFeedbackType = ref("");
@@ -67,8 +73,15 @@ const pagination = ref({
   offset: 0,
 });
 
+onErrorCaptured(handleErrors);
+
 onMounted(() => {
   fetchFeedbacks();
+  window.addEventListener("scroll", handleScroll, false);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll, false);
 });
 
 const feedbackLength = computed(() => {
@@ -76,7 +89,39 @@ const feedbackLength = computed(() => {
 });
 
 function handleErrors(error) {
+  isLoading.value = false;
+  isLoadingFeedbacks.value = false;
+  isLoadingMoreFeedbacks.value = false;
   hasError.value = !!error;
+}
+
+async function handleScroll() {
+  const isBottomOfWindow =
+    Math.ceil(document.documentElement.scrollTop + window.innerHeight) >=
+    document.documentElement.scrollHeight;
+
+  if (isLoading.value || isLoadingMoreFeedbacks.value) return;
+  if (!isBottomOfWindow) return;
+  if (feedbacksData.value.length >= pagination.value.total) return;
+
+  try {
+    isLoadingMoreFeedbacks.value = true;
+    const { data } = await services.feedbacks.getAll({
+      ...pagination.value,
+      type: currentFeedbackType.value,
+      offset: pagination.value.offset + 5,
+    });
+
+    if (data.results.length) {
+      feedbacksData.value.push(...data.results);
+    }
+
+    isLoadingMoreFeedbacks.value = false;
+    pagination.value = data.pagination;
+  } catch (error) {
+    isLoadingMoreFeedbacks.value = false;
+    handleErrors(error);
+  }
 }
 
 async function fetchFeedbacks() {
@@ -89,10 +134,29 @@ async function fetchFeedbacks() {
     });
 
     feedbacksData.value = data.results;
-    pagination.value = data.result;
+    pagination.value = data.pagination;
     isLoading.value = false;
   } catch (error) {
     handleErrors(error);
+  }
+}
+
+async function changeFeedbacksType(type) {
+  try {
+    isLoadingFeedbacks.value = true;
+    pagination.value.limit = 5;
+    pagination.value.offset = 0;
+    currentFeedbackType.value = type;
+    const { data } = await services.feedbacks.getAll({
+      type,
+      ...pagination.value,
+    });
+    feedbacksData.value = data.results;
+    pagination.value = data.pagination;
+    isLoadingFeedbacks.value = false;
+  } catch (error) {
+    isLoadingFeedbacks.value = false;
+    hasError.value = !!error;
   }
 }
 </script>
