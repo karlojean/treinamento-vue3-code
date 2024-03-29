@@ -5,19 +5,21 @@
         <div class="w-28 lg:w-36">
           <img
             class="w-full"
-            src="../../assets/images/logo_white.png"
+            src="../../assets/images/logoWhite.png"
             alt="logo"
           />
         </div>
         <div class="flex">
           <button
             class="px-6 py-2 font-bold rounded full text-white focus:outline-none"
+            id="header-create-account-button"
             @click="() => $emit('create-account')"
           >
             Crie uma conta
           </button>
           <button
             class="px-6 py-2 font-bold bg-white rounded full text-brand-main focus:outline-none"
+            id="header-login-button"
             @click="() => $emit('login')"
           >
             Entrar
@@ -38,6 +40,8 @@
           <div>
             <button
               class="px-6 py-2 mt-10 font-bold bg-white rounded full text-brand-main focus:outline-none"
+              id="cta-create-account-button"
+              @click="() => $emit('create-account')"
             >
               Crie sua conta gratis
             </button>

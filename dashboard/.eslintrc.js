@@ -7,15 +7,16 @@ module.exports = {
   extends: ["plugin:vue/vue3-essential", "@vue/standard"],
   parserOptions: {
     parser: "@babel/eslint-parser",
+    sourceType: "module",
   },
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-    quotes: "double",
+    quotes: ["error", "double"],
     "vue/multi-word-component-names": 0,
+    "space-before-function-paren": "off",
     "comma-dangle": ["error", "always-multiline"],
     semi: [2, "always"],
-    "space-before-function-paren": ["error", "never"],
   },
   overrides: [
     {

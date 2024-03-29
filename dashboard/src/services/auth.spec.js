@@ -46,11 +46,11 @@ describe("AuthService", () => {
 
   it("should throw an error when not found", async () => {
     const errors = { status: 404, statusText: "Not Found" };
-    mockAxios.post.mockImplementationOnce(() => {
+    axiosMock.post.mockImplementationOnce(() => {
       return Promise.resolve({ request: errors });
     });
 
-    const response = await AuthService(mockAxios).login({
+    const response = await AuthService(axiosMock).login({
       email: "igor@igor.me",
       password: "123",
     });

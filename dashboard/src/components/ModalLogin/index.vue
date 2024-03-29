@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between">
+  <div class="flex justify-between" id="modal-login">
     <h1 class="text-4xl font-black text-gray-800">Entre na sua conta</h1>
     <button
       class="text-4xl text-gray-600 focus:outline-none"
@@ -14,6 +14,7 @@
       <label class="block">
         <span class="text-xl font-medium text-gray-800">Email</span>
         <input
+          id="email-field"
           v-model="loginData.email.data"
           type="email"
           class="block w-full px-4 py-3 mt-1 text-lg bg-gray-100 border-2 border-transparent rounded"
@@ -21,6 +22,7 @@
           placeholder="john.doe@email.com"
         />
         <span
+          id="email-error"
           v-if="!!loginData.email.errorMessage"
           class="block font-medium text-brand-danger"
           >{{ loginData.email.errorMessage }}</span
@@ -29,6 +31,7 @@
       <label class="block mt-9">
         <span class="text-xl font-medium text-gray-800">Senha</span>
         <input
+          id="password-field"
           v-model="loginData.password.data"
           type="password"
           class="block w-full px-4 py-3 mt-1 text-lg bg-gray-100 border-2 border-transparent rounded"
@@ -41,6 +44,7 @@
         >
       </label>
       <button
+        id="submit-button"
         :disable="isLoading.data"
         type="submit"
         :class="{ 'opacity-50': isLoading.value }"
@@ -100,13 +104,13 @@ async function handleSubmit() {
       return;
     }
 
-    if (errors.status == 404) {
+    if (errors.status === 404) {
       toast.error("E-mail não encontrado");
     }
-    if (errors.status == 401) {
+    if (errors.status === 401) {
       toast.error("E-mail ou senha inválidos");
     }
-    if (errors.status == 400) {
+    if (errors.status === 400) {
       toast.error("Ocorreu um error ao fazer o login");
     }
     isLoading.value = false;
