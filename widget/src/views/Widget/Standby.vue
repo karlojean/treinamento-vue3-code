@@ -8,5 +8,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import { defineEmits } from "vue";
 import Icon from "@/components/Icon/index.vue";
+
+defineEmits(["open-box"]);
 </script>
