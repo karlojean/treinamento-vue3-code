@@ -4,6 +4,8 @@ import useStore from "./store";
 export interface Navigation {
   next(): void;
   back(): void;
+  setErrorState(): void;
+  setSuccessState(): void;
 }
 
 export default function useNavigation(): Navigation {
@@ -22,5 +24,12 @@ export default function useNavigation(): Navigation {
     }
   }
 
-  return { next, back };
+  function setErrorState(): void {
+    setCurrentComponent("Error");
+  }
+  function setSuccessState(): void {
+    setCurrentComponent("Success");
+  }
+
+  return { next, back, setErrorState, setSuccessState };
 }

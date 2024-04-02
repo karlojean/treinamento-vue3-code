@@ -29,7 +29,7 @@
         <icon size="14" name="Close" :color="colors.gray['800']" />
       </button>
     </div>
-    wizard
+    <wizard />
     <div
       class="text-gray-800 text-sm flex"
       v-if="canShowAdditionalControlAndInfo"
@@ -47,6 +47,7 @@ import colors from "tailwindcss/colors";
 import useStore from "@/hooks/store";
 import useNavigation from "@/hooks/navigation";
 import Icon from "@/components/Icon/index.vue";
+import Wizard from "@/components/Wizard/index.vue";
 
 const store = useStore();
 const { back } = useNavigation();
@@ -57,7 +58,7 @@ const label = computed<string>(() => {
   }
 
   if (store.feedbackType === "IDEA") {
-    return "Nos false a sua ideia";
+    return "Nos fale a sua ideia";
   }
 
   if (store.feedbackType === "OTHER") {
